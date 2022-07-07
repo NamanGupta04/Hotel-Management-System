@@ -1,0 +1,932 @@
+#THIS IS THE CODE OF MY PROJECT ON HOTEL MANAGEMENT
+#HOPE YOU WILL LIKE IT
+import mysql.connector
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from dateutil.parser import parse
+from fpdf import FPDF
+import random
+from datetime import date
+con=mysql.connector.connect(host="localhost",user="root",password="namangurvig",port=3306,database="HOTEL",auth_plugin='mysql_native_password')
+cur=con.cursor()
+def  add_roomtype():
+      print("Adding details of new room")
+      Id      =int(input("Enter the room type ID        :"))
+      Type    =input("Enter the type of room        :")#which type of room u want to add like suite,deluxe,etc..
+      C       =int(input("Enter the capacity of the room:"))#enter the no.of people which can accomodate in the room
+      Cost    =int(input("Enter the rent of the room    :"))#rent for 24 hours
+      query   =("insert into room_type values({},'{}',{},{})".format(Id,Type,C,Cost) )
+      data    =cur.execute(query)
+      con.commit()
+      print("Record added successfully in table room_type")
+#function defined for the change in the type in table room_type
+def change_roomtype():
+      Id      =int(input("Enter the room type ID            :"))
+      print("Now re-enter the type of room ")
+      Type    =input("Enter the modified type of room       :")
+      query1  =("UPDATE  room_type SET Type='{}' WHERE Id={}".format(Type,Id))
+      data    =cur.execute(query1)
+      con.commit()
+      print("Record updated succesfully")
+#function defined for the change in the capacity of the room
+def change_capacity():      
+      Id      =int(input("Enter the room type ID             :"))
+      print("Now re-enter the capacity of room ")
+      C       =int(input("Enter the modified capacity of room:"))
+      query1  =("UPDATE  room_type SET capacity='{}' WHERE Id={}".format(C,Id))
+      data    =cur.execute(query1)
+      con.commit()
+      print("Record updated succesfully")
+#function defined for the change in the rent of the room
+def change_rent():
+      Id      =int(input("Enter the room type ID            :"))
+      print("Now re-enter the type of room ") 
+      Cost    =input("Enter the modified rent of room       :")
+      query1  =("UPDATE  room_type SET Cost='{}' WHERE Id={}".format(Cost,Id))
+      data    =cur.execute(query1)
+      con.commit()
+      print("Record updated succesfully")
+#function defined for making a table named GUEST and adding details in it
+def add_guest():
+      print("Enter the details of the guest")
+      GId            =int(input("Enter the Guest ID           :"))
+      G_FirstName    =input("Enter guests First Name          :")
+      G_LastName     =input("Enter guests Last Name           :")
+      G_Address      =input("Enter the Address of the Guest   :")
+      G_ContactNo    =input("Enter the contact number of Guest:")
+      G_GovernmentId =input("Enter the addhar no.             :")
+      print("Take other neccessary details from the guest like passport size photo and photocopy of their adhaar card and if he/she not an indian then take the photocopy of their passport and other details also")
+      query=("insert into GUEST values({},'{}','{}','{}','{}','{}')".format(GId,G_FirstName,G_LastName,G_Address,G_ContactNo,G_GovernmentId)) 
+      data           =cur.execute(query)
+      con.commit()
+      print("Record added successfully in table GUEST")
+#functions defined for changing name of guest
+def change_guestFirstName():
+      Id          =int(input("Enter the Guest ID               :"))
+      print("Now re-enter the first name of guest ")
+      G_FirstName =input("Enter the guests first name :")
+      query1      =("UPDATE GUEST SET First_Name='{}' WHERE Guest_Id='{}'".format(G_FirstName,Id))
+      data        =cur.execute(query1)
+      con.commit()
+      print("Record updated succesfully")
+#functions defined for changing last name of guest
+def change_guestLastName():
+      Id          =int(input("Enter the Guest ID             :"))
+      print("Now re-enter the last name of guest ")
+      G_LastName  =input("Enter the guests last name :")
+      query1      =("UPDATE GUEST SET First_Name='{}' WHERE Guest_Id='{}'".format(G_LastName,Id))
+      data        =cur.execute(query1)
+      con.commit()  
+      print("Record updated succesfully")
+#functions defined for changing the address of guest
+def change_guestAddress():
+      Id          =int(input("Enter the Guest ID             :"))
+      print("Now re-enter the Address of guest ")
+      G_Address   =input("Enter the guests address    :")
+      query1      =("UPDATE GUEST SET Address='{}' WHERE Guest_Id='{}'".format(G_Address,Id))
+      data        =cur.execute(query1)
+      con.commit()
+      print("Record updated succesfully")
+#function defined for changing the contact number of guest
+def change_guestContactNumber():
+      Id           =int(input("Enter the Guest ID                    :"))
+      print("Now re-enter the Conatct number of guest ")
+      G_ContactNo  =input("Enter the contact number of guest:")
+      query1       =("UPDATE GUEST SET Contact_No='{}' WHERE Guest_Id={}".format(G_ContactNo,Id))
+      data         =cur.execute(query1)
+      con.commit()
+      print("Record updated succesfully")
+#function defined for changing the government id of guest if entered wrong
+def change_guestGovernmentId():
+      Id              =int(input("Enter the Guest ID                               :"))
+      print("Now re-enter the government id of guest ")
+      G_GovernmentId  =input("Enter the modified government id of guest:")
+      query1          =("UPDATE GUEST SET Gov_ID='{}' WHERE Guest_Id={}".format(G_GovernmentId,Id))
+      data            =cur.execute(query1)
+      con.commit()
+      print("Record updated succesfully")
+#function defined for making a new table room in which room number will be added
+def adding_roomstatus():
+      print()
+      print("Entering the details according to its availability")
+      print()
+      print("Displaying the Room_Type_Id and Room_Type")
+      cur.execute("select Id,type from room_type")
+      for i in cur:
+            print(i)
+      print()
+      Id            =int(input("Enter Room Id(NOT ROOM TYPE ID)                        :"))
+      Room_Type_Id  =int(input("Enter the room_type_id which was used before :"))
+      cur.execute("select Room_no,room_type_id from room where room_type_id={}".format(Room_Type_Id))
+      for i in cur:
+            print(i)
+      Room_No       =int(input("Enter the new room number                         :"))
+      Room_Status   =int(input("Enter one(1) for available and two(2) for not available"))#enter the digit 1 and 2
+      cur.execute("insert into ROOM values({},{},{},{})".format(Id,Room_No,Room_Status,Room_Type_Id))
+      con.commit()
+      print("record updated succesfully")
+#function defined for modifying the room number
+def change_Room_no():
+      Id        =int(input("Enter the Room_ID                 :"))
+      print("Now re-enter the room_no")
+      Room_no   =int(input("Enter the modified room no   :"))
+      query     =("Update room set roomno={} WHERE id={}".format(Room_no,Id))
+      data      =cur.execute(query)
+      con.commit()
+      print("Record updated successfully")
+#function define for modifying room status
+def change_Room_Status():
+      Id           =int(input("Enter the Room_ID                      :"))
+      print("Now re-enter the room_status")
+      Room_Status  =int(input("Enter the modified room status:"))
+      query        =("Update room set roomstatus={} WHERE id={}".format(Room_Status,Id))
+      data         =cur.execute(query)
+      con.commit()
+      print("Record updated successfully")
+#function defined for making a new booking
+def New_Booking():
+      now            = datetime.now()
+      current_time   = now.strftime("%H:%M:%S")
+      print("                                               ---GUPTA'S RESIDENCY---")
+      print("                                                    ",date.today())
+      print("                                                      ",current_time)
+      print("Enter the details of the new booking")
+      Booking_Id     =int(input("Enter the booking Id               :"))
+      phone_no       =input("Enter the guest phone number       :")
+      Check_In_Date1 =input("Enter the check in date(yyyy-mm-dd):")
+      Check_In_Date  =parse(Check_In_Date1)
+      Days_Stay      =int(input("Enter the no.of days guest stayed  :"))
+      cur.execute("select Room_no,room_type_id,type from room r,room_type t where r.room_type_id=t.Id and room_status=1 ")
+      print("ROOM_NO,ROOM_TYPE_ID,ROOM_TYPE")
+      for i in cur:
+            print(i)
+      Room_Type_Id   =int(input("Enter the room type id in which guest will stay :"))
+      No_of_room     =int(input("Enter the no.of room guest will stay              :"))
+      cur.execute("select Guest_Id from guest where Contact_No={}".format(phone_no))
+      for i in cur:
+            print("Guest Id:",i)
+      Guest_Id       =int(input("Enter the guest id     :"))
+      Bill_Pay       =float(input("Enter the amount paid:"))
+      Check_In_Date2 =datetime.date(Check_In_Date)
+      Check_Out_Date =Check_In_Date+relativedelta(days=Days_Stay)
+      Check_Out_Date1=Check_Out_Date
+      cur.execute("insert into Reservation Values({},'{}',{},'{}','{}',{},{},{},{})".format(Booking_Id,phone_no,No_of_room,Check_In_Date1,Check_Out_Date1,Guest_Id,Days_Stay,Room_Type_Id,Bill_Pay))
+      con.commit()
+      cur.execute("update room set room_status=2 where Room_no={}".format(No_of_room))
+      con.commit()
+      print("Record addedd successfully;")
+#function defined for changing the booking date
+def Change_bookig_Date():
+      Booking_Id          =int(input("Enter the booking id             :"))
+      print("Now re-enter the booking date")
+      Check_In_Date1      =input("Enter the changed booking date   :")
+      Days_Stay           =int(input("Enter the no.of days guest stayed:"))
+      Check_In_Date       =parse(Check_In_Date1)
+      Check_In_Date2      =datetime.date(Check_In_Date)
+      Check_Out_Date      =Check_In_Date+relativedelta(days=Days_Stay)
+      Check_Out_Date1     =Check_Out_Date
+      query               =("UPDATE reservation set Check_In_Date='{}',Check_Out_Date='{}',Days_Stay={} where B_Id={}".format(Check_In_Date1,Check_Out_Date1,Days_Stay,Booking_Id))
+      cur.execute(query)
+      con.commit()
+      print("Record updated successfully")
+#function defined for guest arrival
+def Guest_Arrival():
+      print("Enter the check in details of guest")
+      print("Showing the rooms which are available")
+      cur.execute("Select*from ROOM where Room_Status=1")
+      print("format in which data will be showed")
+      print("ROOM_ID,ROOM_NO,ROOM_STATUS,ROOM_TYPE_ID")
+      for i in cur:
+             print(i)
+      Id            =int(input("Enter the id of guest:"))
+      a             =datetime.now()
+      print(a)
+      Check_In_Date =input("Enter the check in date of guest:(yyyy-mm-dd)     :")
+      Check_In_Time =input("Enter the check in time of guest:(hh:mm:ss)       :")
+      Room_Type_Id  =int(input("Enter the room type Id:"))#room type id if u want 
+      query         =("Insert into guest_arrival values({},'{}','{}',{})".format(Id,Check_In_Date,Check_In_Time,Room_Type_Id))
+      data          =cur.execute(query)
+      con.commit() 
+      working1      =2
+      Room_No       =int(input("Enter the room number which should be alloted to him:"))
+      query         ="update ROOM set Room_Status={} where Room_No={}".format(working1,Room_No)
+      cur.execute(query)
+      con.commit()       
+      print("Data added successfully")
+#functions defined for guest checkout
+def Guest_Left():
+      print("showing the checkout date saved in the system")
+      phone_no        =input("Enter the Contact No. of Guest:")
+      print("CHECK_OUT_DATE,NO_OF_ROOM_GUEST_ID")
+      cur.execute("select Check_Out_Date,No_of_room,Guest_Id from reservation where Contact_No='{}'".format(phone_no))
+      for i in cur:
+            print(i)
+      print("Enter the check out details of guest")
+      now               = datetime.now()
+      current_time      = now.strftime("%H:%M:%S")
+      print(current_time)
+      Check_Out_Date    =input("Enter the check out date of guest   :")
+      Check_Out_Time    =input("Enter the check out time of guest   :")
+      Room_No           =int(input("Enter the room no from which guest left:"))
+      working=1
+      query             ="update ROOM set Room_Status={} where Room_No={}".format(working,Room_No)
+      cur.execute(query)
+      con.commit()
+      guest_id          =input("Enter the guest id                  :")
+      query1            =("Insert into Guest_departure values('{}','{}','{}')".format(guest_id,Check_Out_Date,Check_Out_Time))
+      cur.execute(query1)
+      con.commit()
+      print("Showing the details of room to check whether it is updated or not")
+      cur.execute("select*from ROOM")
+      for i in cur:
+            print(i)
+#RESTUARNT PRE DEFINED
+#everything can be edited according to user
+#MENU SAMPLE
+def restaurant():
+      phone_number=input("Enter the guest Contact Number:")
+      r=0
+      print("--------------------------------------------------------------------------------------------------------------------------") 
+      print("                                                         MENU") 
+      print("--------------------------------------------------------------------------------------------------------------------------") 
+      print()
+      print(" BEVARAGES                               31 Dal Fry................ 265.00           DESSERT") 
+      print("-----------------------------------      32 Kadai Chaap............ 265.00           -------------------------------------") 
+      print(" 1  Tea.....................  70.00      33 Dum Aloo............... 265.00           60 Rava Kesari................ 120.00") 
+      print(" 2  Masala Tea..............  90.00      34 Mix Vegetables......... 265.00           61 Gulab Jamun................  90.00") 
+      print(" 3  Hot Coffee.............. 120.00      35 Aloo Gobhi............. 265.00           62 Gazar Ka Halwa(Seasonal)... 120.00")
+      print(" 4  Cold Coffee............. 120.00      ") 
+      print(" 5  Lassi(Swwt/Salted)...... 100.00      ROTI KI TOKRI                               SIZZLERS") 
+      print(" 6  MockTails................100.00      --------------------------------------      --------------------------------------")
+      print("                                         36 Roti........................  35.00      63 Chaap Special..............  400.00")      
+      print(" APPETIZERS                              37 ButterRoti..................  40.00      64 Chinese....................  350.00")
+      print("-----------------------------------      38 Missi Roti..................  70.00      65 South Indian...............  375.00")
+      print(" 7  Chilli Mushroom......... 230.00      39 Plain Naan .................  60.00      66 Italian....................  450.00") 
+      print(" 8  Paneer Manchurian....... 230.00      40 Garlic Naan.................  80.00") 
+      print(" 9  Hakka Noodles........... 250.00      41 Lacha Parantha..............  70.00") 
+      print(" 10 Honey Chilli Potato..... 200.00      42 Butter Naan.................  65.00") 
+      print(" 11 Veg Spring Roll......... 250.00      43 Stuffed Naan................  90.00") 
+      print(" 12 Baby Corn Chilli........ 230.00      44 Kulcha(Aloo/Onion/Paneer)... 100.00")  
+      print(" 13 Ginger Garlic Noodles... 250.00")
+      print(" 14 Veg Chopsuey............ 230.00      RICE ")
+      print("                                         ----------------------------------") 
+      print(" SOUPS                                   45 Plain Rice.............. 140.00") 
+      print("----------------------------------       46 Jeera Rice.............. 150.00") 
+      print(" 15 Tomato Soup............ 140.00       47 Fried Rice.............. 170.00") 
+      print(" 16 Sweet Corn............. 140.00       48 Veg Biryani............. 200.00") 
+      print(" 17 Hot & Sour............. 140.00") 
+      print(" 18 Veg Talumein........... 140.00       SOUTH INDIAN") 
+      print(" 19 Veg.Munchow............ 140.00       ---------------------------------") 
+      print("                                         49 Plain Dosa............. 160.00") 
+      print(" MAIN COURSE                             50 Masala Dosa............ 180.00") 
+      print("----------------------------------       51 Vegetable Uthapams..... 180.00") 
+      print(" 20 Dal Makhani............ 265.00       52 Upma................... 140.00") 
+      print(" 21 Dal Gharwali........... 265.00       53 Rice Idli.............. 140.00") 
+      print(" 22 Shahi Paneer........... 265.00       54 Sambhar Vada........... 160.00") 
+      print(" 23 Kadai Paneer........... 285.00       ") 
+      print(" 24 Paneer Butter Masala... 300.00       ICE CREAM") 
+      print(" 25 Matar Mushroom......... 285.00       ---------------------------------") 
+      print(" 26 Navratan Korma......... 285.00       55 Vanilla................. 170.00") 
+      print(" 27 Jeera Aloo............. 285.00       56 Strawberry.............. 170.00") 
+      print(" 28 Malai Kofta............ 285.00       57 Chocolate............... 170.00") 
+      print(" 29 Chana Masala........... 285.00       58 Butter Scotch........... 170.00") 
+      print(" 30 Gobhi Masala........... 265.00       59 Special Sundae.......... 350.00")
+      print("Press 0 -to end ") 
+      ch=1
+      while(ch!=0): 
+            ch=int(input("----->")) 
+            if ch==1 or ch==38 or ch==41: 
+                  rs=70
+                  r=r+rs 
+            elif ch<=19 and ch>=15 or ch==52 or ch==53 or ch==45: 
+                  rs=140
+                  r=r+rs 
+            elif ch==22 or ch==21 or ch==20 or ch==30 or ch==31 or ch==32 or ch==33 or ch==34 or ch==35: 
+                  rs=265
+                  r=r+rs 
+            elif ch<=58 and ch>=55 or ch==47: 
+                  rs=170
+                  r=r+rs 
+            elif ch<=29 and ch>=25 or ch==23: 
+                  rs=285
+                  r=r+rs 
+            elif (ch<=4 and ch>=3) or ch==60 or ch==62: 
+                  rs=120
+                  r=r+rs 
+            elif ch==2 or ch==61 or ch==43: 
+                  rs=90
+                  r=r+rs 
+            elif ch==5 or ch==44 or ch==6: 
+                  rs=100
+                  r=r+rs 
+            elif ch==7 or ch==8 or ch==12 or ch==14: 
+                  rs=230
+                  r=r+rs 
+            elif ch==9 or ch==11 or ch==13: 
+                  rs=250
+                  r=r+rs 
+            elif ch==10 or ch==48: 
+                  rs=200
+                  r=r+rs 
+            elif ch==24: 
+                  rs=300
+                  r=r+rs 
+            elif ch==36: 
+                  rs=35
+                  r=r+rs 
+            elif ch==37: 
+                  rs=40
+                  r=r+rs
+            elif ch==39:
+                  rs=60
+                  r=r+rs
+            elif ch==40:
+                  rs=80
+                  r=r+rs
+            elif ch==42:
+                  rs=65
+                  r=r+rs
+            elif ch==46:
+                  rs=150
+                  r+=rs
+            elif ch==49 or ch==54:
+                  rs=160
+                  r+=rs
+            elif ch==59 or ch==64:
+                  rs=350
+                  r+=rs
+            elif ch==63:
+                  rs=400
+                  r+=rs
+            elif ch==65:
+                  rs=375
+                  r+=rs
+            elif ch==66:
+                  rs=450
+                  r+=rs
+            elif ch==50 or ch==51:
+                  rs=180
+                  r+=rs
+            elif ch==0: 
+                  pass
+            else: 
+                  print("Wrong Choice..!!") 
+      print("Total Bill of the customer(",phone_number,"): ",r,"AED")
+      query1    =("Insert into Restaurant values('{}',{})".format(phone_number,r))
+      cur.execute(query1)
+      con.commit()
+#########################################
+def feedback():
+      name=input("Enter your name")
+      feedback=input("Enter your feedback:")
+      cur.execute("insert into feedback values('{}','{}')".format(name,feedback))
+      print("Thank u for ur feedback")
+##########################################
+def Bill():
+      cur.execute("select First_Name,Last_Name,Check_In_Date,Check_Out_Date,Days_Stay from guest g,reservation r where g.Guest_Id=r.Guest_Id")
+      for i in cur:
+            print(i)
+      check_in        =input("Enter the check in date")
+      check_out       =input("Enter the check out date")
+      no_of_days      =input("Enter the no.of days for which guest stay")
+      first_name      =input("Enter the First Name")
+      last_name       =input("Enter the last Name")
+      phone_no        =input("Enter the contact number")
+      cur.execute("select Room_Type_Id from reservation where Contact_No={}".format(phone_no))
+      for i in cur:
+            a         =print("room_type_id:-",i)
+      Room_type_Id    =int(input("Enter the room type id shown above"))
+      cur.execute("select cost from room_type where Id={}".format(Room_type_Id))
+      for i in cur:
+                  print("Rent of room per night:-",i)
+      rent1           =input("Enter the rent of room in which guest stayed")
+      cur.execute("select Amount from Restaurant where Contact_Number={}".format(phone_no))
+      for i in cur :
+            b         =print("Restaurant Bill Of the Guest:",i)
+      b1              =int(input("Enter the Restaurant Bill of the Guest"))
+      cur.execute("select Amount from Laundry where Contact_Number={}".format(phone_no))
+      for i in cur :
+            c         =print("Laundry Bill Of the Guest:",i)
+      c1              =int(input("Enter the laundry Bill of the Guest"))
+      gst             =int(rent1)/18
+      service_charges =int(input("Enter the service charges"))
+      cleaning_charges=int(input("Enter the cleaning charges"))
+      rent            =int(rent1)*int(no_of_days)+service_charges+cleaning_charges+b1+c1
+      now             = datetime.now()
+      current_time    = now.strftime("%H:%M:%S")#string format
+      cur.execute("update reservation set bill_pay={} where  Contact_No={}".format(rent,phone_no))
+      con.commit()    
+      bill= FPDF()
+      bill.add_page()
+      bill.set_font("Arial", size=12)
+      bill.cell(0,5,"The Royal Atlantis Residences", ln=0, align="L")
+      bill.cell(0,5,"Receipt No- "+str(random.randint(1000,10000000)), ln=1, align="R")
+      bill.cell(0,5,"Crescent Rd", ln=0, align="l")
+      bill.cell(0,5,"Date - "+str(check_out), ln=1, align="R")
+      bill.cell(0,5,"Time - "+str(current_time), ln=1, align="R")
+      bill.cell(0,5,"The Palm Jumeirah - Dubai ", ln=1, align="L")
+      bill.cell(0,10,'INVOICE', 0, 1, align='C')
+      bill.cell(0,0,"------------------------------------------------------------------------------------------------------------------------------------------",ln=1,align="L")
+      bill.cell(160,10,"Guest Name",ln=0,align="L")
+      bill.cell(160,10,first_name+" "+last_name,ln=1,align="L")
+      bill.cell(0,0,"------------------------------------------------------------------------------------------------------------------------------------------",ln=1,align="L")
+      bill.cell(160,10," Check In Date ",ln=0,align="L")
+      bill.cell(160,10,str(check_in),ln=1,align="L")
+      bill.cell(160,10," Check Out Date ",ln=0,align="L")
+      bill.cell(160,10,str(check_out),ln=1,align="L")
+      bill.cell(160,10," Total Days ",ln=0,align="L")
+      bill.cell(160,10,str(no_of_days),ln=1,align="L")
+      bill.cell(160,10," Restaurant Charges",ln=0,align="L")
+      bill.cell(160,10,str(b1),ln=1,align="L")
+      bill.cell(160,10," Laundry Charges",ln=0,align="L")
+      bill.cell(160,10,str(c1),ln=1,align="L")
+      bill.cell(160,10," Rent Per day* ",ln=0,align="L")
+      bill.cell(160,10,str(rent1),ln=1,align="L")      
+      bill.cell(160,10," Service Charges",ln=0,align="L")
+      bill.cell(160,10,str(service_charges),ln=1,align="L")
+      bill.cell(160,10," Cleaning Charges",ln=0,align="L")
+      bill.cell(160,10,str(cleaning_charges),ln=1,align="L")
+      bill.cell(0,0,"------------------------------------------------------------------------------------------------------------------------------------------",ln=1,align="L")
+      bill.cell(160,10," Total Amount Payable ",ln=0,align="L")
+      bill.cell(160,10,str(rent),"AED",ln=1,align="L")
+      bill.cell(0,0,"------------------------------------------------------------------------------------------------------------------------------------------",ln=1,align="L")
+      bill.cell(0,10,"*Inclusive of all other taxes!",ln=1,align="L")
+      bill.cell(0,100,"Signature ",ln=1,align="R")
+      while(True):
+            a=input("Enter the name of the pdf of bill(.pdf)")
+            bill.output(a)
+            break
+      print("PDF OF BILL IS SAVED")
+########################################
+def all_details_of_guest():
+      cur.execute("select*from guest g,reservation r where g.Guest_Id=r.Guest_Id and bill_pay!=0.00")
+      for i in cur:
+            print(i)
+#function defined for laundry
+#everything can be edited according to user
+#LAUNDRY SAMPLE
+def laundry():
+      print()
+      print("]->-------------------LAUNDRY-------------------<-[")
+      print()
+      print("1.Trouser............ 30.00")
+      print("2.Shirts............. 35.00")
+      print("3.Jeans.............. 40.00")
+      print("4.Kurta.............. 45.00")
+      print("5.Pajama/Pajami...... 20.00")
+      print("6.Skirts............. 25.00")
+      print("7.Coats.............. 70.00")
+      print("8.Saree.............. 80.00")
+      print("9.Under Garments..... 20.00")
+      print("10.Socks,gloves,caps. 20.00")
+      print("11.Exit")
+      amount=0#empty variable to store amount
+      while(True):
+            print()
+            ch=int(input("Enter ur choice:--->"))
+            if ch<1 or ch>=11:
+                  break
+            if ch==1:
+                  c=int(input("Enter the quantity:--->"))
+                  amount+=30*c
+            if ch==2:
+                  c=int(input("Enter the quantity:--->"))
+                  amount+=35*c
+            if ch==3:
+                  c=int(input("Enter the quantity:--->"))
+                  amount+=40*c
+            if ch==4:
+                  c=int(input("Enter the quantity:--->"))
+                  amount+=45*c
+            if ch==5:
+                  c=int(input("Enter the quantity:--->"))
+                  amount+=20*c
+            if ch==6:
+                  c=int(input("Enter the quantity:--->"))
+                  amount+=25*c
+            if ch==7:
+                  c=int(input("Enter the quantity:--->"))
+                  amount+=70*c
+            if ch==8:
+                  c=int(input("Enter the quantity:--->"))
+                  amount+=80*c
+            if ch==9:
+                  c=int(input("Enter the quantity:--->"))
+                  amount+=20*c
+            if ch==10:
+                  c=int(input("Enter the quantity:--->"))
+                  amount+=20*c   
+      print ("Total Laundary Cost =",amount,"AED \n")
+      phone_number=input("Enter the Contact No.")
+      query1=("Insert into Laundry values('{}',{})".format(phone_number,amount))
+      cur.execute(query1)
+      con.commit()
+#MENU DRIVEN PROGRAM FOR HOTEL
+print("********************************************************************")
+print("*                                                                  *")
+print("*             Welcome to Hotel Management System                   *")
+print("*                                                                  *")
+print("********************************************************************")
+print()
+print()
+print("             *****************************************")
+print("             |     Enter 1 for Admin mode            |")
+print("             |     Enter 2 for User mode	     |")
+print("             *****************************************")
+choice=int(input("Enter your Choice-->"))
+if choice<1 or choice>2:
+      print("Invalid Input")
+if choice==1:      
+      password=("**********")
+      n=input("Enter password")
+      if n==password:
+            print("*****************************************\n|         Welcome to Admin Mode         |\n*****************************************")
+            print()
+            print()
+            print()
+            while(True):
+                  con=mysql.connector.connect(host="localhost",user="root",password="namangurvig",port=3306,database="HOTEL",auth_plugin='mysql_native_password')
+                  cur=con.cursor()
+                  print("*******************************************************************************************")
+                  print("*                                                                                         *")
+                  print("*                             -The Royal Atlantis Residences-                             *")
+                  print("*                                                                                         *")
+                  print("*******************************************************************************************")
+                  print()
+                  print()
+                  print("1.Room Type Details")
+                  print("2.Room Details")
+                  print("3.Guest Details")
+                  print("4.Reservation")
+                  print("5.Guest Check in details")
+                  print("6.Restaurant")
+                  print("7.Laundry")
+                  print("8.Guest Check out details")
+                  print("9.Bill")
+                  print("10.Exit")
+                  ch=int(input("Enter the choice from the above menu-->"))
+                  if (ch<1 or ch>=10):
+                        break
+       
+                  if(ch==1):
+                        while(True):
+                              while(True):
+                                    print("-----------------------------------------------------------------")
+                                    print("|                     ROOM TYPE DETAILS MENU                    |")
+                                    print("-----------------------------------------------------------------")
+                                    print("1.Add Room Type")
+                                    print("2.Change in Room Type")
+                                    print("3.Chagne in Room Capacity")
+                                    print("4.Change in room rent")
+                                    print("5.Display the details of the room type")
+                                    print("6.EXIT")
+                                    ch1=int(input("Enter the choice from above"))
+                                    if(ch1>1 or ch1<=6):
+                                          break
+                              if (ch1==1):
+                                    add_roomtype()
+                              if(ch1==2):
+                                    change_roomtype()
+                              if(ch1==3):
+                                   change_capacity()
+                              if(ch1==4):
+                                   change_rent()
+                              if ch1==5:
+                                    cur.execute("select*from room_type")
+                                    for i in cur:
+                                          print(i)
+                              if(ch1==6):
+                                   break
+                  if(ch==2):
+                        while(True):
+                              while(True):
+                                    print("-----------------------------------------------------------------")
+                                    print("|                       ROOM DETAILS MENU                       |")
+                                    print("-----------------------------------------------------------------")
+                                    print("1.Add Room")
+                                    print("2.Modify Room No")
+                                    print("3.Modify Room Status")
+                                    print("4.Display the details of the rooms")
+                                    print("5.Exit Menu")
+                                    ch3=int(input("Enter ur choice-->"))
+                                    if (ch3>1 or ch3<=5):
+                                          break
+                              if ch3==1:
+                                    adding_roomstatus()
+                              if ch3==2:
+                                    change_Room_no()
+                              if ch3==3:
+                                    change_Room_Status()
+                              if ch3==4:
+                                    cur.execute("select*from room")
+                                    print("Available Rooms:-")
+                                    print("ROOM_ID,ROOM_NO,AVAILABILITY,ROOM_TYPE_ID")
+                                    for i in cur:
+                                          print(i)
+                              if ch3==5:
+                                    break
+                  if(ch==3):
+                        while(True):
+                              while(True):
+                                     print("-----------------------------------------------------------------")
+                                     print("|                        GUEST DETAIL                           |")
+                                     print("-----------------------------------------------------------------")
+                                     print("1.Add New Guest")
+                                     print("2.Modify Guest First Name")
+                                     print("3.Modify Guest Last name")
+                                     print("4.Modify Address of Guest")
+                                     print("5.Modify Mobile_No of Guest")
+                                     print("6.Display the details of all the guest")
+                                     print("7.Exit")
+                                     ch2=int(input("Enter ur choice-->"))
+                                     if (ch2>1 or ch2<=7):
+                                           break
+                              if ch2==1:
+                                     add_guest()
+                              if ch2==2:
+                                     change_guestFirstName()
+                              if ch2==3:
+                                     change_guestLastName()
+                              if ch2==4:
+                                     change_guestAddress()
+                              if ch2==5:
+                                     change_guestContactNumber()
+                              if ch2==6:
+                                     cur.execute("select*from guest")
+                                     for i in cur:
+                                           print(i)
+                              if ch2==7:
+                                     break
+                  if(ch==4):
+                        while(True):
+                              while(True):
+                                    print("-----------------------------------------------------------------")
+                                    print("|                         BOOKING MENU                          |")
+                                    print("-----------------------------------------------------------------")
+                                    print("1.Add a New Guest")
+                                    print("2.Change Booking Date")
+                                    print("3.Display all the reservations")
+                                    print("4.Exit")
+                                    ch4=int(input("Enter ur choice-->"))
+                                    if(ch4>1 or ch4<=4):
+                                          break
+                              if ch4==1:
+                                    New_Booking()
+                              if ch4==2:
+                                    Change_bookig_Date()
+                              if ch4==3:
+                                    cur.execute("select*from reservation")
+                                    for i in cur:
+                                          print(i)
+                              if ch4==4:
+                                    break
+                  if(ch==5):
+                        while(True):
+                              while(True):
+                                    print("-----------------------------------------------------------------")
+                                    print("|                          GUEST ARRIVAL                        |")
+                                    print("-----------------------------------------------------------------")
+                                    print("1.Add details of Guest")
+                                    print("2.Exit")
+                                    ch5=int(input("Enter ur choice-->"))
+                                    if(ch5>1 or ch5<=2):
+                                          break
+                              if ch5==1:
+                                    Guest_Arrival()
+                              if ch5==2:
+                                    break
+                  if(ch==6):
+                        while(True):
+                              while(True):
+                                    print("-----------------------------------------------------------------")
+                                    print("|                            RESTAURANT                         |")
+                                    print("-----------------------------------------------------------------")
+                                    print("1.Menu")
+                                    print("2.Exit")
+                                    ch6=int(input("Enter ur choice"))
+                                    if(ch6>1 or ch6<=2):
+                                          break
+                              if ch6==1:
+                                    restaurant()
+                              if ch6==2:
+                                    break
+                  if(ch==7):
+                        laundry()
+                  if(ch==8):
+                        while(True):
+                              while(True):
+                                    print("-----------------------------------------------------------------")
+                                    print("|                     GUEST DEPARTURE                           |")
+                                    print("-----------------------------------------------------------------")
+                                    print("1.Guest Departure Details:")
+                                    print("2.Show all data of those guest who left")
+                                    print("3.Exit")
+                                    ch8=int(input("Enter ur choice-->"))
+                                    if(ch8>1 or ch8<=3):
+                                          break
+                              if ch8==1:
+                                    Guest_Left()
+                              if ch8==2:
+                                    all_details_of_guest()
+                              if ch8==3:
+                                    break
+                  if(ch==9):
+                        while(True):
+                              while(True):
+                                    print("-----------------------------------------------------------------")
+                                    print("|                           BILL                                |")
+                                    print("-----------------------------------------------------------------")
+                                    print("1.Generate Bill")
+                                    print("2.Exit")
+                                    ch9=int(input("Enter ur choice-->"))
+                                    if(ch9>1 or ch9<=2):
+                                          break
+                              if ch9==1:
+                                    Bill()
+                              if ch9==2:
+                                    break
+if choice==2:
+      print("*******************************************************************************************")
+      print("*                                                                                         *")
+      print("*                             -The Royal Atlantis Residences-                             *")
+      print("*                                                                                         *")
+      print("*******************************************************************************************")
+      while(True):
+            while(True):
+                  print()
+                  print()
+                  #print("User can change the data whenever they want")
+                  print()
+                  print()
+                  print("1. Room Details")
+                  print("2. Restaurants & Bars")
+                  print("3. Feedback")
+                  print("4. Exit")
+                  n=int(input("Enter your choice-->"))
+                  if n>1 or n<=4:
+                        break
+#everything can be edited according to user
+#SAMPLE DISPLAY
+            if n==1:
+                  print()
+                  print("WELCOME HOME\nLive your best life at The Royal Atlantis Residences. Iconic architecture. Timeless design.")
+                  print("Offering a sophisticated lifestyle and hospitality experience with architecture from the finest international designers")
+                  print("Residencies")
+                  print()                     
+                  print("THE RESIDENCES @2,000AED")
+                  print("------------------------")
+                  print("Live a Life of Ease and Elegance ,Be part of a vibrant community surrounded by exhilarating experiences that celebrate both sea and sky.\nStunning swimming pools, relaxing beaches, warm, authentic service and vibrant bars and restaurants, all provide the setting for an inspired lifestyle.")
+                  print()
+                  print("THE SIGNATURE COLLECTION @5,000AED")
+                  print("----------------------------------")
+                  print("The Signature Collection presents the most exclusive Residences at The Royal Atlantis and will offer the ultimate in luxury lifestyle living. Each home is dramatically positioned with spectacular private terraces in the sky and awe-inspiring views.\nMany of the Signature Residences also boast impressive private pools. Interior spaces are warm and inviting, creating the perfect place to call home, all complemented by expansive entertainment areas and grand gardens. The Signature Collection will define a new level of luxury in Dubai.")
+                  print()
+                  print("PENTHOUSES @20,000AED")
+                  print("---------------------")
+                  print("Sky-High Luxury\nThe Penthouses at The Royal Atlantis are the ultimate in luxury living. The pinnacle of residential sophistication, each Penthouse has spectacular views of the Gulf and the dramatic Dubai skyline, the most sought-after homes in the city.\nEach Penthouse has its own expansive terrace, featuring breath-taking pools and luxurious dining and living spaces, perfect for relaxing with the family or the definitive location for entertaining.")
+                  print()
+                  print("LUXURY LIVING @15,000AED")
+                  print("------------------------")
+                  print("A Dedicated Team to Meet Your Every Need\nExclusive concierge services are available for all residents. The Royal Atlantis Team is always on call offering unparalleled service and exclusive privileges. From helping with housekeeping or butlers providing a lavish dinner to reserving a private jet, all of your requests will be met with the highest levels of skill and professionalism.")
+            if n==2:
+                        while(True):
+                              print()
+                              print()
+                              print("-----------------------------------------------------------------")
+                              print("|                       RESTAURANT & BAR                        |")
+                              print("-----------------------------------------------------------------")
+                              print()
+                              print() 
+                              print("1.MENU")
+                              print("2.Details Of Chef")
+                              ch=int(input("Enter ur choice-->"))
+                              if(ch>1 or ch<=2):
+                                    break
+                        if ch==1:
+                              print("--------------------------------------------------------------------------------------------------------------------------") 
+                              print("                                                         MENU") 
+                              print("--------------------------------------------------------------------------------------------------------------------------") 
+                              print()
+                              print(" BEVARAGES                               31 Dal Fry................ 265.00           DESSERT") 
+                              print("-----------------------------------      32 Kadai Chaap............ 265.00           -------------------------------------") 
+                              print(" 1  Tea.....................  70.00      33 Dum Aloo............... 265.00           60 Rava Kesari................ 120.00") 
+                              print(" 2  Masala Tea..............  90.00      34 Mix Vegetables......... 265.00           61 Gulab Jamun................  90.00") 
+                              print(" 3  Hot Coffee.............. 120.00      35 Aloo Gobhi............. 265.00           62 Gazar Ka Halwa(Seasonal)... 120.00")
+                              print(" 4  Cold Coffee............. 120.00      ") 
+                              print(" 5  Lassi(Swwt/Salted)...... 100.00      ROTI KI TOKRI                               SIZZLERS") 
+                              print(" 6  MockTails................100.00      --------------------------------------      --------------------------------------")
+                              print("                                         36 Roti........................  35.00      63 Chaap Special..............  400.00")      
+                              print(" APPETIZERS                              37 ButterRoti..................  40.00      64 Chinese....................  350.00")
+                              print("-----------------------------------      38 Missi Roti..................  70.00      65 South Indian...............  375.00")
+                              print(" 7  Chilli Mushroom......... 230.00      39 Plain Naan .................  60.00      66 Italian....................  450.00") 
+                              print(" 8  Paneer Manchurian....... 230.00      40 Garlic Naan.................  80.00") 
+                              print(" 9  Hakka Noodles........... 250.00      41 Lacha Parantha..............  70.00") 
+                              print(" 10 Honey Chilli Potato..... 200.00      42 Butter Naan.................  65.00") 
+                              print(" 11 Veg Spring Roll......... 250.00      43 Stuffed Naan................  90.00") 
+                              print(" 12 Baby Corn Chilli........ 230.00      44 Kulcha(Aloo/Onion/Paneer)... 100.00")  
+                              print(" 13 Ginger Garlic Noodles... 250.00")
+                              print(" 14 Veg Chopsuey............ 230.00      RICE ")
+                              print("                                         ----------------------------------") 
+                              print(" SOUPS                                   45 Plain Rice.............. 140.00") 
+                              print("----------------------------------       46 Jeera Rice.............. 150.00") 
+                              print(" 15 Tomato Soup............ 140.00       47 Fried Rice.............. 170.00") 
+                              print(" 16 Sweet Corn............. 140.00       48 Veg Biryani............. 200.00") 
+                              print(" 17 Hot & Sour............. 140.00") 
+                              print(" 18 Veg Talumein........... 140.00       SOUTH INDIAN") 
+                              print(" 19 Veg.Munchow............ 140.00       ---------------------------------") 
+                              print("                                         49 Plain Dosa............. 160.00") 
+                              print(" MAIN COURSE                             50 Masala Dosa............ 180.00") 
+                              print("----------------------------------       51 Vegetable Uthapams..... 180.00") 
+                              print(" 20 Dal Makhani............ 265.00       52 Upma................... 140.00") 
+                              print(" 21 Dal Gharwali........... 265.00       53 Rice Idli.............. 140.00") 
+                              print(" 22 Shahi Paneer........... 265.00       54 Sambhar Vada........... 160.00") 
+                              print(" 23 Kadai Paneer........... 285.00       ") 
+                              print(" 24 Paneer Butter Masala... 300.00       ICE CREAM") 
+                              print(" 25 Matar Mushroom......... 285.00       ---------------------------------") 
+                              print(" 26 Navratan Korma......... 285.00       55 Vanilla................. 170.00") 
+                              print(" 27 Jeera Aloo............. 285.00       56 Strawberry.............. 170.00") 
+                              print(" 28 Malai Kofta............ 285.00       57 Chocolate............... 170.00") 
+                              print(" 29 Chana Masala........... 285.00       58 Butter Scotch........... 170.00") 
+                              print(" 30 Gobhi Masala........... 265.00       59 Special Sundae.......... 350.00")
+                        if ch==2:
+                              print()
+                              print("The Royal Atlantis Resort & Residences will be home to restaurants and bars inspired and led by some of the most famous chefs in the world.\n Featured highlights include Dinner by Heston Blumenthal; Milos by Costas Spiliadis; La Mar by Gastón Acurio; Jaleo by José Andrés; Hakkasan; and Ariana’s Kitchen by Ariana Bundy.")
+                              print("An unprecedented collection of world-renowned chefs from across the globe in one destination, unlike any other.")
+                              print()
+                              print("Costas Spiliadis - Milos")
+                              print("------------------------")
+                              print("Recognised as one of the finest Mediterranean seafood restaurants in the world, estiatorio Milos by Costa Spiliadis is a sophisticated culinary experience offering the elegant simplicity of dining seaside in Greece.")
+                              print()
+                              print("GASTON ACURIO")
+                              print("-------------")
+                              print("Celebrating the authentic and diverse flavours of Peruvian gastronomy, La Mar by Gastón Acurio is one of the world’s leading Peruvian restaurants and the first traditional cebichería in Dubai.")
+                              print()
+                              print("Chef Nobu in Nobu Dubai Japanese restaurant")
+                              print("NOBU MATSUHISA")
+                              print("Combining traditional Japanese taste with Peruvian flavours, this world-renowned restaurant offers a sophisticated dining experience.")
+                              print()
+                              print("Georgio Locatelli at Ronda Locatelli Italian Restaurant Dubai")
+                              print("GIORGIO LOCATELLI")
+                              print("-----------------")
+                              print("Celebrating Italy, focusing on the freshest ingredients, Ronda Locatelli delivers an experience for the entire family")
+                              print()
+                              print("Heston Blumenthal and Ashley Palmer Watts")
+                              print("HESTON BLUMENTHAL")
+                              print("-----------------")
+                              print("Experience gastronomical creations inspired by British and European cuisine at Dinner by Heston.")
+                              print()
+                              print("JOSE ANDRES")
+                              print("-----------")
+                              print("Three-Michelin-starred chef Jose Andres presents creative and authentic Spanish cuisine at Jaleo.")
+                              print()
+                              print("ARIANA BUNDY")
+                              print("------------")
+                              print("Iranian-American celebrity chef Ariana Bundy debuts her stunning Persian restaurant.")
+                              print()
+                              print("GORDON RAMSAY")
+                              print("-------------")
+                              print("Gordon Ramsay's Bread Street Kitchen delivers classic British cuisine with his signature twists.")
+                              print()
+                              print("Costas Spiliadis - Milos")
+                              print("COSTA SPILIADIS")
+                              print("---------------")
+                              print("Recognised as one of the finest Mediterranean seafood restaurants in the world, estiatorio Milos by Costa Spiliadis is a sophisticated culinary experience offering the elegant simplicity of dining seaside in Greece.")
+
+            if n==3:
+                  print()
+                  print()
+                  feedback()
+            if n==4:
+                  break
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#T              H           Y           L           I
+#H               O           O            I           T
+#A              P           U            K
+#N               E                        E
+#K               
+#
+#Y
+#O
+#U
+#
+
+            
